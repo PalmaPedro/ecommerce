@@ -1,0 +1,72 @@
+package utility;
+
+import model.Customer;
+import model.Invoice;
+import model.Item;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Map;
+
+public class DataGeneratorUtil {
+    String cId = "C001";
+    String cPassword = "password!12";
+    String cEmail = "cj@mail.com";
+    String cName = "Chris F Jabbour";
+    String cNumber = "7244211234";
+    String cAddr = "Pittsburgh PA, USA";
+    Customer c = new Customer(cId, cPassword, cEmail, cName, cAddr, cNumber);
+
+    long pThreeId = 3;
+    String pTestName3 = "GeForce RTX™ 3090";
+    String pTestCode3 = "GPU01";
+    BigDecimal pTestPrice3 = new BigDecimal("1499.00");
+    int quantityTest3 = 1;
+    BigDecimal item3Total = pTestPrice3;
+
+    Item p3 = new Item(pThreeId, pTestName3, pTestCode3, pTestPrice3, quantityTest3, item3Total);
+
+
+    public void generateCustomers(Map<String, Customer> customers) {
+        customers.put(cEmail, c);
+    }
+
+    public void generateItems(Map<Long, Item> items) {
+
+        long pId = 1;
+        String pName = "Polarized Cyberpunk Sunglasses";
+        String pCode = "PSG01";
+        BigDecimal pPrice = new BigDecimal("39.99");
+        int quantity = 1;
+        Item p = new Item(pId, pName, pCode, pPrice, quantity, pPrice);
+        items.put(pId, p);
+
+        long pTwoId = 2;
+        String pTestName = "Rubber Ducky";
+        String pTestCode = "D01";
+        BigDecimal pTestPrice = new BigDecimal("12.99");
+        int quantityTest = 1;
+        Item p2 = new Item(pTwoId, pTestName, pTestCode, pTestPrice, quantityTest, pPrice);
+        items.put(pTwoId, p2);
+        items.put(pThreeId, p3);
+
+        long pId4 = 4;
+        //String pName4 = "How to be a Hero By Daniel Birmingham unabridged edition";
+        String pName4 = "Makar's Makarov water gun";
+        String pCode4 = "MM01";
+        BigDecimal pPrice4 = new BigDecimal("65.99");
+        int quantityTest4 = 1;
+        Item p4 = new Item(pId4, pName4, pCode4, pPrice4, quantityTest4, pPrice4);
+        items.put(pId4, p4);
+    }
+
+    public void generateInvoices(Map<Long, Invoice> invoices, Map<String, Item>itemCodes) {
+        long invoiceId = 1111;
+        LocalDate today = LocalDate.now();
+        LocalDate after15days = today.plusDays(16);
+
+        Invoice invoice = new Invoice(invoiceId, c, p3, after15days, p3.getItemPrice());
+        invoices.put(invoiceId, invoice);
+        itemCodes.put(p3.getItemCode(), p3);
+
+    }
+}
