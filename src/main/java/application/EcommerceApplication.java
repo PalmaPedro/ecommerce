@@ -1,6 +1,6 @@
 package application;
 
-import controller.EcommerceController;
+import controllers.EcommerceController;
 
 /**
  * Entry point of the application

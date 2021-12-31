@@ -1,8 +1,9 @@
-package controller;
+package controllers;
 
-import model.Customer;
-import model.Invoice;
-import model.Item;
+import models.Customer;
+import models.Invoice;
+import models.Item;
+import models.ShoppingCart;
 import utility.DataGeneratorUtil;
 
 import java.time.LocalDate;
@@ -44,7 +45,7 @@ public class EcommerceController {
         String choiceEntered;
         int selected;
         System.out.println("+================================+");
-        System.out.println("| Welcome to CyclerDK Web-shop! |");
+        System.out.println("| Welcome to CYKLER.DK Web-shop! |");
         System.out.println("|1. Register |");
         System.out.println("|2. Login |");
         System.out.println("|3. Exit app. |");
@@ -73,11 +74,11 @@ public class EcommerceController {
         String inputToParse;
         int selected;
 
-        System.out.println("+==========Customer Menu=========+");
-        System.out.println("|1. Buy an Item                  |");
-        System.out.println("|2. Return an Item               |");
-        System.out.println("|3. Log out                      |"); // return user to main menu
-        System.out.println("+================================+");
+        System.out.println("+==========Customer Menu===============+");
+        System.out.println("|1. Buy an Item                        |");
+        System.out.println("|2. Subscribe for price drop alerts    |");
+        System.out.println("|3. Log out                            |"); // return user to main menu
+        System.out.println("+======================================+");
         while (true) {
             System.out.println("Enter a number (1,2,3) from Customer menu : ");
             inputToParse = consoleScan.nextLine();
@@ -92,9 +93,73 @@ public class EcommerceController {
         return selected;
     }
 
+    /**
+     * Display a submenu for payment options, after selecting an item
+     *
+     * @return selected - User menu prompt selection of type int. returns a choice
+     *          or exception if invalid input
+     */
+    private int displayPaymentOptMenu() {
+        String inputToParse;
+        int selected;
+
+        System.out.println("+==========Payment Options Menu===============+");
+        System.out.println("|1. Credit Card                               |");
+        System.out.println("|2. PayPal                                    |");
+        System.out.println("|3. MobilePay                                 |"); // return user to main menu
+        System.out.println("+==============================================");
+        while (true) {
+            System.out.println("Enter a number (1,2,3) from Payment Options menu : ");
+            inputToParse = consoleScan.nextLine();
+            try {
+                selected = Integer.parseInt(inputToParse);
+                break;
+            } catch (Exception e) {
+                System.out.println("Something happened with the try!");
+                System.out.println("Please enter a valid choice. Try again!");
+            }
+        }
+        return selected;
+    }
+
     // Methods
 
-    // private void login() {}
+     private void login() {
+         Customer customer;
+         String cEmail;
+         String cPassword;
+
+         System.out.println("Enter Email and Password:");
+         System.out.println("Email : ");
+         cEmail = consoleScan.nextLine();
+         System.out.println("Password : ");
+         cPassword = consoleScan.nextLine();
+         System.out.println();
+         if (customers.containsKey(cEmail)) {
+             customer = customers.get(cEmail);
+             System.out.println("\n+======Login Successful!=========+");
+             System.out.println("Welcome " + customer.getName());
+             if (customer.getPassword().equals(cPassword)) {
+                 while (true) {
+                     showItems();
+                     int input = displayCustMenu();
+                     switch (input) {
+                         case 1 ->
+                                 buyItem(customer);
+                         case 2 ->
+                                 subscribe(customer);
+                         case 3 -> //continue mainloop;
+                                 System.out.println("Signed out successfully");
+                         default -> System.out.println("Enter a valid choice");
+                     }
+                 }
+             } else {
+                 System.out.println("Invalid Credentials..Try again");
+             }
+         } else {
+             System.out.println("Invalid Credentials..Try again");
+         }
+     }
 
     /***
      * method for creating a customer account
@@ -150,7 +215,7 @@ public class EcommerceController {
             Map.Entry<Long, Item> mentry = iterator.next();
             System.out.println("|" + mentry.getKey() + ". " + mentry.getValue() + "|");
         }
-        System.out.println("+================================+");
+        System.out.println("+=================================================+");
     }
 
     private void showInvoices() {
@@ -181,10 +246,18 @@ public class EcommerceController {
         choice = consoleScan.nextLine();
         selected = Long.parseLong(choice);
 
-        // Extra credit Idea/challenge: ask for how much of an idea to buy/quantity and
-        // get the invoice to show the total of all item elements in item list
-        // Extra // ask if a user wants to purchase a different item and prompt if they
-        // are finished.
+        // Add item to shopping cart
+        ShoppingCart cart = new ShoppingCart();
+        if (items.containsKey(selected)) {
+            item = items.get(selected);
+            cart.addItem(item);
+        }
+
+        // Select payment options
+        int option = displayPaymentOptMenu();
+
+        // Make payment
+        pay(option, cart);
 
         try {
             if (items.containsKey(selected)) {
@@ -203,12 +276,51 @@ public class EcommerceController {
                 System.out.println(invoice.showInvoiceDetails());
                 System.out.println(invoice);
                 System.out.println("Press Enter to continue");
-                //System.in.read();
 
             }
         } catch (Exception e) {
             System.out.println("Please enter the product number from the catalog.");
         }
+    }
+
+    /**
+     * Method for subscribing a customer to a "price drop" alert
+     */
+    private void subscribe(Customer c) {
+        System.out.println("Customer" + c + " subscribed");
+    }
+
+    /**
+     * Method to handle payment for an item
+     */
+    private void pay(int option, ShoppingCart cart) {
+        switch (option) {
+            case 1 -> paypalStrategy(cart);
+            case 2 -> creditCardStrategy(cart);
+            case 3 -> mobilePayStrategy(cart);
+        }
+    }
+
+    /**
+     * Method to handle Paypal payment strategy
+     */
+    private void paypalStrategy(ShoppingCart cart) {
+
+    }
+
+    /**
+     * Method to handle Credit Card strategy
+     */
+    private void creditCardStrategy (ShoppingCart cart) {
+
+    }
+
+    /**
+     * Method to handle MobilePay payment strategy
+     */
+
+    private void mobilePayStrategy (ShoppingCart cart) {
+
     }
 
     /**
@@ -278,50 +390,14 @@ public class EcommerceController {
      */
     public void startBrowsing() {
         try {
-            Customer customer;
-            String cEmail;
-            String cPassword;
             int input; // local function scope
-            mainloop: while (true) {
+            while (true) {
                 input = displayMainMenu();
                 switch (input) {
                     case 1 -> register();
-                    case 2 -> {
-                        System.out.println("Enter Email and Password:");
-                        System.out.println("Email : ");
-                        cEmail = consoleScan.nextLine();
-                        System.out.println("Password : ");
-                        cPassword = consoleScan.nextLine();
-                        System.out.println();
-                        if (customers.containsKey(cEmail)) {
-                            customer = customers.get(cEmail);
-                            System.out.println("\n+======Login Successful!=========+");
-                            System.out.println("Welcome " + customer.getName());
-                            if (customer.getPassword().equals(cPassword)) {
-                                while (true) {
-                                    showItems();
-                                    input = displayCustMenu();
-                                    switch (input) {
-                                        case 1 -> //System.in.read();
-                                                buyItem(customer);
-                                        case 2 -> //System.in.read();
-                                                ReplaceItem(customer);
-                                        case 3 -> {
-                                            System.out.println("Signed out successfully");
-                                            continue mainloop;
-                                        }
-                                        default -> System.out.println("Enter a valid choice");
-                                    }
-                                }
-                            } else {
-                                System.out.println("Invalid Credentials..Try again");
-                            }
-                        } else {
-                            System.out.println("Invalid Credentials..Try again");
-                        }
-                    }
+                    case 2 -> login();
                     case 3 -> {
-                        System.out.println("Thank you for using the CyberJab Ecommerce CLI");
+                        System.out.println("Thank you for using the CYKLER.DK WebshopCLI");
                         System.exit(1);
                     }
                     default -> System.out.println("Enter a Valid Option!");

@@ -1,4 +1,4 @@
-package model;
+package models;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -44,7 +44,7 @@ public class Invoice {
                 + "|P.No\t\tName\t\t\tItemCode\t\tPrice\t\tQuantity\t\tTotal  | \n"
                 + "|" + item.getpId() + "\t" + item.getName() + "\t\t" + item.getItemCode() +"\t\t\t" + item.getItemPrice() +"\t\t" + item.getQuantity() +"\t\t\t" + "$"+ item.getItemPrice() + "| \n"
                 + "|----------------------------------------------|\n"
-                + "|Total = $"+ invoiceTotal +"|\n"
+                + "|Total = "+ invoiceTotal +" DKK |\n"
                 + "|Thank you for your purchase!|\n"
                 + "============================================|";
     }

@@ -1,4 +1,4 @@
-package model;
+package models;
 
 import java.math.BigDecimal;
 
@@ -8,7 +8,7 @@ public class Item {
     private final String itemCode;
     private final BigDecimal itemPrice;
     private final int quantity;
-    private final BigDecimal itemTotal;
+    private BigDecimal itemTotal;
 
     public Item(long pId, String name, String itemCode, BigDecimal itemPrice, int quantity, BigDecimal itemTotal) {
         this.pId = pId;
