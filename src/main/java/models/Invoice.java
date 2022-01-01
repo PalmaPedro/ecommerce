@@ -12,20 +12,55 @@ public class Invoice extends BaseInvoice {
     //private final int quantity = 1; //change to totalitemsQTY bought
     private final double invoiceTotal;
 
-    public Invoice(long invoiceNo, Customer customer, Item item, LocalDate purchaseDate, double invoiceTotal) {
-        this.invoiceNo = invoiceNo;
-        this.customer = customer;
-        this.item = item;
-        this.purchaseDate = purchaseDate;
-        this.invoiceTotal = invoiceTotal;
+    private Invoice(InvoiceBuilder builder) {
+        this.invoiceNo = builder.invoiceNo;
+        this.customer = builder.customer;
+        this.item = builder.item;
+        this.items = builder.items;
+        this.purchaseDate = builder.purchaseDate;
+        this.invoiceTotal = builder.invoiceTotal;
     }
 
-    public Invoice(long invoiceNo, Customer customer, Item item, double invoiceTotal) {
-        this.invoiceNo = invoiceNo;
-        this.customer = customer;
-        this.item = item;
-        this.purchaseDate = LocalDate.now();
-        this.invoiceTotal = invoiceTotal;
+    public LocalDate getPurchaseDate() {
+        return purchaseDate;
+    }
+
+    public static class InvoiceBuilder {
+        private long invoiceNo;
+        private Customer customer;
+        private Item item;
+        private List<Item> items;
+        private LocalDate purchaseDate;
+        private double invoiceTotal;
+
+        public InvoiceBuilder() {}
+
+        public Invoice build() { return new Invoice(this); }
+
+        public InvoiceBuilder withInvoiceNo(long invoiceNo) {
+            this.invoiceNo = invoiceNo;
+            return this;
+        }
+
+        public InvoiceBuilder belongsTo(Customer customer) {
+            this.customer = customer;
+            return this;
+        }
+
+        public InvoiceBuilder forItem(Item item) {
+            this.item = item;
+            return this;
+        }
+
+        public InvoiceBuilder itemBought(LocalDate purchaseDate) {
+            this.purchaseDate = purchaseDate;
+            return this;
+        }
+
+        public InvoiceBuilder hasTotal(double invoiceTotal) {
+            this.invoiceTotal = invoiceTotal;
+            return this;
+        }
     }
 
     @Override
@@ -37,20 +72,17 @@ public class Invoice extends BaseInvoice {
 
     @Override
     public void createInvoice(){
-        data +=  "+======= Invoice Generated! ===========+\n"
-                + "|Customer Email: " + customer.getEmail() + "\t" + " Date: " + purchaseDate + "|\n"
+        data +=  "+================ Invoice body =================+\n"
+                + "|Customer Email: " + customer.getEmail() + "\t" + " Date: " + getPurchaseDate() + "|\n"
                 + "|Invoice No: " + invoiceNo + "|\n"
                 + "|P.No\t\tName\t\t\tItemCode\t\tPrice\t\tQuantity\t\tTotal  | \n"
-                + "|" + item.getpId() + "\t" + item.getName() + "\t\t" + item.getItemCode() + "\t\t\t" + item.getBasePrice() + "\t\t" + item.getQuantity() + "\t\t\t" + "$" + item.getBasePrice() + "| \n"
-                + "|----------------------------------------------|\n"
-                + "|Total = " + invoiceTotal + " DKK |\n"
-                + "|Thank you for your purchase!|\n"
-                + "============================================|";
+                + "|" + item.getItemId() + "\t" + item.getName() + "\t\t" + item.getItemCode() + "\t\t\t" + item.getBasePrice() + "\t\t" + item.getQuantity() + "\t\t\t" + "     " + item.getBasePrice() + " | \n"
+                + "|\n"
+                + "|Total = " + item.getBasePrice() + " DKK |\n"
+                + "|Thank you for your purchase!|\n";
     }
 
-    public LocalDate getPurchaseDate() {
-        return purchaseDate;
-    }
+
 
 }
 

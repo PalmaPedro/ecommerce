@@ -9,9 +9,10 @@ public class HeaderDecorator extends InvoiceDecorator{
 
     public void addHeader() {
         data = """
-                \tCYKLER.DK
-                \tKøbenhavn, Denmark
-                \t2300 København S
+                +=============== Invoice header ===============+"
+                |CYKLER.DK
+                |København, Denmark
+                |2300 København S
                 """;
     }
 }

@@ -10,6 +10,6 @@ public class ColorDecorator extends InvoiceDecorator{
     }
 
     public void addColor() {
-        System.out.println(ColorEnum.BLUE_BOLD + "\t**COLOR DECORATOR ADDED TO INVOICE**\n");
+        System.out.println(ColorEnum.YELLOW_BOLD + "\t**COLOR DECORATOR ADDED TO INVOICE**\n");
     }
 }

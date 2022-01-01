@@ -28,8 +28,7 @@ public class EcommerceController {
         dataGeneratorUtil.generateItems(items);
         invoices = new HashMap<>();
         itemCodes = new HashMap<>();
-        dataGeneratorUtil.generateInvoices(invoices, itemCodes);
-
+        //dataGeneratorUtil.generateInvoices(invoices, itemCodes);
     }
 
     /**
@@ -168,24 +167,35 @@ public class EcommerceController {
         String password;
         String confirmPassword;
         String name;
+
         System.out.println("Enter your details for a new customer account");
+
         System.out.println("Name: ");
         name = consoleScan.nextLine();
+
         System.out.println("Email: ");
         email = consoleScan.nextLine();
+
         while (customers.containsKey(email)) {
             System.out.println("Email already exists, Try again..");
             email = consoleScan.nextLine();
         }
-        //
+
         System.out.println("Password: ");
         password = consoleScan.nextLine();
+
         System.out.println("Confirm password: ");
         confirmPassword = consoleScan.nextLine();
+
         // password check for matching strings.
         try {
             if (password.equals(confirmPassword)) {
-                customer = new Customer(name, password, email);
+                // implement Builder design pattern
+                customer = new Customer.CustomerBuilder()
+                        .withName(name)
+                        .withPassword(password)
+                        .withEmail(email)
+                        .build();
 
                 customers.put(email, customer);
                 System.out.println("Registration Successful");
@@ -267,7 +277,13 @@ public class EcommerceController {
                 long max = 100L;
                 long invoiceNo = min + (long) (Math.random() * (max - min));
 
-                BaseInvoice invoice = new Invoice(invoiceNo, c, item, item.getItemTotal());
+                BaseInvoice invoice = new Invoice.InvoiceBuilder()
+                        .withInvoiceNo(invoiceNo)
+                        .belongsTo(c)
+                        .forItem(item)
+                        .hasTotal(item.getItemTotal())
+                        .build();
+
                 invoices.put(invoiceNo, invoice);
                 itemCodes.put(item.getItemCode(), item);
 

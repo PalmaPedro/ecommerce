@@ -14,8 +14,16 @@ public class DataGeneratorUtil {
     String cEmail = "cj@mail.com";
     String cName = "Chris F Jabbour";
     String cNumber = "7244211234";
-    String cAddr = "Pittsburgh PA, USA";
-    Customer c = new Customer(cId, cPassword, cEmail, cName, cAddr, cNumber);
+    String cAddress = "Pittsburgh PA, USA";
+
+    Customer customer = new Customer.CustomerBuilder()
+            .withId(cId)
+            .withPassword(cPassword)
+            .withEmail(cEmail)
+            .withName(cName)
+            .withAddress(cAddress)
+            .withContactNumber(cNumber)
+            .build();
 
     long pThreeId = 3;
     String pTestName3 = "Kildmeoes Urban   ";
@@ -24,11 +32,17 @@ public class DataGeneratorUtil {
     int quantityTest3 = 1;
     double item3Total = pTestPrice3;
 
-    Item p3 = new Item(pThreeId, pTestName3, pTestCode3, pTestPrice3, quantityTest3, item3Total);
-
+    Item p3 = new Item.ItemBuilder()
+            .withItemId(pThreeId)
+            .withName(pTestName3)
+            .withItemCode(pTestCode3)
+            .withBasePrice(pTestPrice3)
+            .withQuantity(quantityTest3)
+            .withItemTotal(item3Total)
+            .build();
 
     public void generateCustomers(Map<String, Customer> customers) {
-        customers.put(cEmail, c);
+        customers.put(cEmail, customer);
     }
 
     public void generateItems(Map<Long, Item> items) {
@@ -38,7 +52,15 @@ public class DataGeneratorUtil {
         String pCode = "CENT01";
         double pPrice = 5.999;
         int quantity = 1;
-        Item p = new Item(pId, pName, pCode, pPrice, quantity, pPrice);
+
+        Item p = new Item.ItemBuilder()
+                .withItemId(pId)
+                .withName(pName)
+                .withItemCode(pCode)
+                .withBasePrice(pPrice)
+                .withQuantity(quantity)
+                .withBasePrice(pPrice)
+                .build();
         items.put(pId, p);
 
         long pTwoId = 2;
@@ -46,7 +68,16 @@ public class DataGeneratorUtil {
         String pTestCode = "MBK01";
         double pTestPrice = 6.399;
         int quantityTest = 1;
-        Item p2 = new Item(pTwoId, pTestName, pTestCode, pTestPrice, quantityTest, pPrice);
+
+        Item p2 = new Item.ItemBuilder()
+                .withItemId(pTwoId)
+                .withName(pTestName)
+                .withItemCode(pTestCode)
+                .withBasePrice(pTestPrice)
+                .withQuantity(quantityTest)
+                .withBasePrice(pPrice)
+                .build();
+
         items.put(pTwoId, p2);
         items.put(pThreeId, p3);
 
@@ -56,7 +87,17 @@ public class DataGeneratorUtil {
         String pCode4 = "SCT01";
         double pPrice4 = 6.799;
         int quantityTest4 = 1;
-        Item p4 = new Item(pId4, pName4, pCode4, pPrice4, quantityTest4, pPrice4);
+
+        //Item p4 = new Item(pId4, pName4, pCode4, pPrice4, quantityTest4, pPrice4);
+        Item p4 = new Item.ItemBuilder()
+                .withItemId(pId4)
+                .withName(pName4)
+                .withItemCode(pCode4)
+                .withBasePrice(pPrice4)
+                .withQuantity(quantityTest4)
+                .withBasePrice(pPrice4)
+                .build();
+
         items.put(pId4, p4);
     }
 
@@ -65,9 +106,14 @@ public class DataGeneratorUtil {
         LocalDate today = LocalDate.now();
         LocalDate after15days = today.plusDays(16);
 
-        Invoice invoice = new Invoice(invoiceId, c, p3, after15days, p3.getBasePrice());
+        //Invoice invoice = new Invoice(invoiceId, customer, p3, after15days, p3.getBasePrice());
+        Invoice invoice = new Invoice.InvoiceBuilder()
+                .withInvoiceNo(invoiceId)
+                .belongsTo(customer)
+                .forItem(p3)
+                .itemBought(after15days)
+                .build();
         invoices.put(invoiceId, invoice);
         itemCodes.put(p3.getItemCode(), p3);
-
     }
 }

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Item implements IItem{
-    private final long pId;
+    private final long itemId;
     private final String name;
     private final String itemCode;
     private final double basePrice;
@@ -13,14 +13,14 @@ public class Item implements IItem{
     private final double itemTotal;
     private final List<Customer> customers = new ArrayList<>();
 
-    public Item(long pId, String name, String itemCode, double basePrice, int quantity, double itemTotal) {
-        this.pId = pId;
-        this.name = name;
-        this.itemCode = itemCode;
-        this.basePrice = basePrice;
-        this.currentPrice = basePrice;
-        this.quantity = quantity;
-        this.itemTotal = itemTotal;
+    private Item(ItemBuilder builder) {
+        this.itemId = builder.itemId;
+        this.name = builder.name;
+        this.itemCode = builder.itemCode;
+        this.basePrice = builder.basePrice;
+        this.currentPrice = builder.currentPrice;
+        this.quantity = builder.quantity;
+        this.itemTotal = builder.itemTotal;
     }
 
     public double getBasePrice() {
@@ -50,8 +50,8 @@ public class Item implements IItem{
         return itemTotal;
     }
 
-    public long getpId() {
-        return pId;
+    public long getItemId() {
+        return itemId;
     }
 
     public String getName() {
@@ -62,9 +62,58 @@ public class Item implements IItem{
         return itemCode;
     }
 
+    public static class ItemBuilder {
+        private long itemId;
+        private String name;
+        private String itemCode;
+        private double basePrice;
+        private double currentPrice;
+        private int quantity;
+        private double itemTotal;
+
+        public ItemBuilder() {}
+
+        public Item build() { return new Item(this); }
+
+        public ItemBuilder withItemId(long itemId) {
+            this.itemId = itemId;
+            return this;
+        }
+
+        public ItemBuilder withName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public ItemBuilder withItemCode(String itemCode) {
+            this.itemCode = itemCode;
+            return this;
+        }
+
+        public ItemBuilder withBasePrice(double basePrice) {
+            this.basePrice = basePrice;
+            return this;
+        }
+
+        public ItemBuilder withCurrentPrice(double currentPrice) {
+            this.currentPrice = currentPrice;
+            return this;
+        }
+
+        public ItemBuilder withQuantity(int quantity) {
+            this.quantity = quantity;
+            return this;
+        }
+
+        public ItemBuilder withItemTotal(double itemTotal) {
+            this.itemTotal = itemTotal;
+            return this;
+        }
+    }
+
     @Override
     public String toString() {
-        return  "\t" + name + "\t" + itemCode + "\t" + basePrice;
+        return  "\t" + getName() + "\t" + getItemCode() + "\t" + getBasePrice();
     }
 
     @Override
