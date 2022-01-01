@@ -17,7 +17,7 @@ public class ShoppingCart {
     public double totalCost() {
         double total = 0.0;
         for (Item itemPrice : items) {
-            total += itemPrice.getItemPrice().doubleValue();
+            total += itemPrice.getBasePrice();
         }
         return total;
     }

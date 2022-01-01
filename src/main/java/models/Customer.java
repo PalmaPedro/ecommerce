@@ -1,6 +1,6 @@
 package models;
 
-public class Customer {
+public class Customer implements ICustomer {
 
     private String id;
     private String password;
@@ -85,4 +85,12 @@ public class Customer {
     public String toString() {
         return "Customer [email=" + email + ", name=" + name + "]";
     }
+
+    public void update(Item item) {
+        System.out.println("Dear " + this.name + ", " + item.getName()
+                + " Bicycle, is now available at " + item.getCurrentPrice()
+                + "; Discount = " + item.getDiscount() + " %");
+    }
+
+
 }

@@ -1,9 +1,10 @@
 package utility;
 
+import models.BaseInvoice;
 import models.Customer;
 import models.Invoice;
 import models.Item;
-import java.math.BigDecimal;
+
 import java.time.LocalDate;
 import java.util.Map;
 
@@ -19,9 +20,9 @@ public class DataGeneratorUtil {
     long pThreeId = 3;
     String pTestName3 = "Kildmeoes Urban   ";
     String pTestCode3 = "KILU01";
-    BigDecimal pTestPrice3 = new BigDecimal("5.199");
+    double pTestPrice3 = 5.199;
     int quantityTest3 = 1;
-    BigDecimal item3Total = pTestPrice3;
+    double item3Total = pTestPrice3;
 
     Item p3 = new Item(pThreeId, pTestName3, pTestCode3, pTestPrice3, quantityTest3, item3Total);
 
@@ -35,7 +36,7 @@ public class DataGeneratorUtil {
         long pId = 1;
         String pName = "Centurion Ultimate";
         String pCode = "CENT01";
-        BigDecimal pPrice = new BigDecimal("5.999");
+        double pPrice = 5.999;
         int quantity = 1;
         Item p = new Item(pId, pName, pCode, pPrice, quantity, pPrice);
         items.put(pId, p);
@@ -43,7 +44,7 @@ public class DataGeneratorUtil {
         long pTwoId = 2;
         String pTestName = "MBK Genesis       ";
         String pTestCode = "MBK01";
-        BigDecimal pTestPrice = new BigDecimal("6.399");
+        double pTestPrice = 6.399;
         int quantityTest = 1;
         Item p2 = new Item(pTwoId, pTestName, pTestCode, pTestPrice, quantityTest, pPrice);
         items.put(pTwoId, p2);
@@ -53,18 +54,18 @@ public class DataGeneratorUtil {
         //String pName4 = "How to be a Hero By Daniel Birmingham unabridged edition";
         String pName4 = "Scott Metrix 30 EQ ";
         String pCode4 = "SCT01";
-        BigDecimal pPrice4 = new BigDecimal("6.799");
+        double pPrice4 = 6.799;
         int quantityTest4 = 1;
         Item p4 = new Item(pId4, pName4, pCode4, pPrice4, quantityTest4, pPrice4);
         items.put(pId4, p4);
     }
 
-    public void generateInvoices(Map<Long, Invoice> invoices, Map<String, Item>itemCodes) {
+    public void generateInvoices(Map<Long, BaseInvoice> invoices, Map<String, Item>itemCodes) {
         long invoiceId = 1111;
         LocalDate today = LocalDate.now();
         LocalDate after15days = today.plusDays(16);
 
-        Invoice invoice = new Invoice(invoiceId, c, p3, after15days, p3.getItemPrice());
+        Invoice invoice = new Invoice(invoiceId, c, p3, after15days, p3.getBasePrice());
         invoices.put(invoiceId, invoice);
         itemCodes.put(p3.getItemCode(), p3);
 

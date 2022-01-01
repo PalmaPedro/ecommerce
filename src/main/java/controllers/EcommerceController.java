@@ -1,6 +1,7 @@
 package controllers;
 
 import models.*;
+import utility.ColorEnum;
 import utility.DataGeneratorUtil;
 
 import java.time.LocalDate;
@@ -11,7 +12,7 @@ public class EcommerceController {
     DataGeneratorUtil dataGeneratorUtil = new DataGeneratorUtil();
     Map<String, Customer> customers;
     Map<Long, Item> items;
-    Map<Long, Invoice> invoices; /// Place to store the invoices a customer creates
+    Map<Long, BaseInvoice> invoices; /// Place to store the invoices a customer creates
     Map<String, Item> itemCodes; /// For item code lookup
 
     Scanner consoleScan = new Scanner(System.in);
@@ -71,11 +72,11 @@ public class EcommerceController {
         String inputToParse;
         int selected;
 
-        System.out.println("+==========Customer Menu===============+");
-        System.out.println("|1. Buy an Item                        |");
-        System.out.println("|2. Subscribe for price drop alerts    |");
-        System.out.println("|3. Log out                            |"); // return user to main menu
-        System.out.println("+======================================+");
+        System.out.println("+========== Customer Menu ===============+");
+        System.out.println("|1. Buy an Item                          |");
+        System.out.println("|2. Subscribe for price drop alerts      |");
+        System.out.println("|3. Log out                              |"); // return user to main menu
+        System.out.println("+========================================+");
         while (true) {
             System.out.println("Enter a number (1,2,3) from Customer menu : ");
             inputToParse = consoleScan.nextLine();
@@ -100,11 +101,11 @@ public class EcommerceController {
         String inputToParse;
         int selected;
 
-        System.out.println("+==========Payment Options Menu===============+");
-        System.out.println("|1. Credit Card                               |");
-        System.out.println("|2. PayPal                                    |");
-        System.out.println("|3. MobilePay                                 |"); // return user to main menu
-        System.out.println("+==============================================");
+        System.out.println("+========== Payment Options Menu ===============+");
+        System.out.println("|1. Credit Card                                 |");
+        System.out.println("|2. PayPal                                      |");
+        System.out.println("|3. MobilePay                                   |"); // return user to main menu
+        System.out.println("+================================================");
         while (true) {
             System.out.println("Enter a number (1,2,3) from Payment Options menu : ");
             inputToParse = consoleScan.nextLine();
@@ -216,11 +217,11 @@ public class EcommerceController {
     }
 
     private void showInvoices() {
-        Set<Map.Entry<Long, Invoice>> set = invoices.entrySet();
-        Iterator<Map.Entry<Long, Invoice>> iterator = set.iterator();
+        Set<Map.Entry<Long, BaseInvoice>> set = invoices.entrySet();
+        Iterator<Map.Entry<Long, BaseInvoice>> iterator = set.iterator();
         System.out.println("\n+================================+");
         while (iterator.hasNext()) {
-            Map.Entry<Long, Invoice> mentry = iterator.next();
+            Map.Entry<Long, BaseInvoice> mentry = iterator.next();
             System.out.println("|" + mentry.getValue() + "|");
         }
         System.out.println("+================================+");
@@ -266,16 +267,25 @@ public class EcommerceController {
                 long max = 100L;
                 long invoiceNo = min + (long) (Math.random() * (max - min));
 
-                Invoice invoice = new Invoice(invoiceNo, c, item, item.getItemTotal());
+                BaseInvoice invoice = new Invoice(invoiceNo, c, item, item.getItemTotal());
                 invoices.put(invoiceNo, invoice);
                 itemCodes.put(item.getItemCode(), item);
 
-                invoice.showInvoiceDetails();
+                // Add color, header and footer to invoice
+                InvoiceDecorator colorDecorator = new ColorDecorator();
+                InvoiceDecorator headerDecorator = new HeaderDecorator();
+                InvoiceDecorator footerDecorator = new FooterDecorator();
 
-                invoice.showInvoiceDetails();
-                System.out.println(invoice.showInvoiceDetails());
-                System.out.println(invoice);
-                System.out.println("Press Enter to continue");
+                colorDecorator.attachTo(invoice);
+                footerDecorator.attachTo(colorDecorator);
+                headerDecorator.attachTo(footerDecorator);
+                headerDecorator.createInvoice();
+
+                invoice.printInvoice();
+
+                // reset color
+                System.out.println(ColorEnum.RESET);
+                System.out.println("\nPress Enter to continue");
 
             }
         } catch (Exception e) {
@@ -286,8 +296,34 @@ public class EcommerceController {
     /**
      * Method for subscribing a customer to a "price drop" alert
      */
-    private void subscribe(Customer c) {
-        System.out.println("Customer" + c + " subscribed");
+    private void subscribe(Customer customer) {
+        // Show list of items
+        String choice;
+        long selected;
+
+        showItems();
+        // select an item to subscribe and search for it by its key in the hashmap
+        System.out.println("Enter the product Id of the item you want to subscribe");
+        // choice
+        choice = consoleScan.nextLine();
+        selected = Long.parseLong(choice);
+
+        if (items.containsKey(selected)) {
+            // attach or subscriber customer
+            items.get(selected).subscribe(customer);
+
+            // show that customer will be notified if price is lower than basePrice
+            // this is temporary. add an option to input price change and fetch subscribed customers list to notify all
+            items.get(selected).price(5.999);
+        }
+
+    }
+
+    /**
+     * Method for unsubscribe a customer
+     */
+    private void unsubscribe(Customer customer) {
+
     }
 
     /**
@@ -306,7 +342,7 @@ public class EcommerceController {
      */
     private void creditCardStrategy (ShoppingCart cart) {
         // pause for 3 seconds to emulate payment being processed
-        System.out.println("+=======Payment by Credit Card selected=======+");
+        System.out.println("+======= Payment by Credit Card selected =======+");
         System.out.println("... Payment is being processed");
         try {
             Thread.sleep(3000);
@@ -321,7 +357,7 @@ public class EcommerceController {
      */
     private void paypalStrategy(ShoppingCart cart) {
         // pause for 3 seconds to emulate payment being processed
-        System.out.println("+=======Payment by Paypal selected=======+");
+        System.out.println("+======= Payment by Paypal selected =======+");
         System.out.println("... Payment is being processed");
         try {
             Thread.sleep(3000);
@@ -337,7 +373,7 @@ public class EcommerceController {
 
     private void mobilePayStrategy (ShoppingCart cart) {
         // pause for 3 seconds to emulate payment being processed
-        System.out.println("+=======Payment by MobilePay selected=======+");
+        System.out.println("+======= Payment by MobilePay selected =======+");
         System.out.println("... Payment is being processed");
         try {
             Thread.sleep(3000);
@@ -351,12 +387,13 @@ public class EcommerceController {
      * Method for checking a purchase by invoice and purchase date and returning an
      * item within a 15 day return policy
      */
+    /*
     private void ReplaceItem(Customer c) {
         String input;
         String choice;
         Item itemToReplace;
         Long invoiceNo;
-        Invoice enteredInvoice;
+        BaseInvoice enteredInvoice;
         System.out.println("Welcome " + c.getEmail() + "!! Your invoice details are:");
         showInvoices();
 
@@ -405,7 +442,7 @@ public class EcommerceController {
             System.out.println("Not a valid choice");
 
         }
-    }
+    }*/
 
     /**
      * Method for starting up ecommerce menu for Customer registration Customer
