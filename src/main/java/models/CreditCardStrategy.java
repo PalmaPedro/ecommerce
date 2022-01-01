@@ -28,7 +28,7 @@ public class CreditCardStrategy implements IPaymentStrategy {
 
     @Override
     public void pay(double amount) {
-        System.out.println("Payment successful using your Credit Card");
+        System.out.println("\tPayment successful!\n");
     }
 }
 

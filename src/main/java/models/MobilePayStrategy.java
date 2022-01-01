@@ -14,7 +14,7 @@ public class MobilePayStrategy implements IPaymentStrategy {
 
     @Override
     public void pay(double amount) {
-        System.out.println("Payment successful using Mobile Pay");
+        System.out.println("\tPayment successful!\n");
     }
 }
 

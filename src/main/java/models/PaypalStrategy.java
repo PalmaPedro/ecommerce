@@ -20,7 +20,7 @@ public class PaypalStrategy implements IPaymentStrategy {
 
     @Override
     public void pay(double amount) {
-        System.out.println("Payment successful using Paypal");
+        System.out.println("\tPayment successful!\n");
     }
 }
 

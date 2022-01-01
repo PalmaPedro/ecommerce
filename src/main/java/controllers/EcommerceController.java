@@ -1,9 +1,6 @@
 package controllers;
 
-import models.Customer;
-import models.Invoice;
-import models.Item;
-import models.ShoppingCart;
+import models.*;
 import utility.DataGeneratorUtil;
 
 import java.time.LocalDate;
@@ -247,6 +244,7 @@ public class EcommerceController {
         selected = Long.parseLong(choice);
 
         // Add item to shopping cart
+        // extract method from this
         ShoppingCart cart = new ShoppingCart();
         if (items.containsKey(selected)) {
             item = items.get(selected);
@@ -259,6 +257,8 @@ public class EcommerceController {
         // Make payment
         pay(option, cart);
 
+        // Generate invoice
+        // extract method
         try {
             if (items.containsKey(selected)) {
                 item = items.get(selected);
@@ -295,24 +295,40 @@ public class EcommerceController {
      */
     private void pay(int option, ShoppingCart cart) {
         switch (option) {
-            case 1 -> paypalStrategy(cart);
-            case 2 -> creditCardStrategy(cart);
+            case 1 -> creditCardStrategy(cart);
+            case 2 -> paypalStrategy(cart);
             case 3 -> mobilePayStrategy(cart);
         }
-    }
-
-    /**
-     * Method to handle Paypal payment strategy
-     */
-    private void paypalStrategy(ShoppingCart cart) {
-
     }
 
     /**
      * Method to handle Credit Card strategy
      */
     private void creditCardStrategy (ShoppingCart cart) {
+        // pause for 3 seconds to emulate payment being processed
+        System.out.println("+=======Payment by Credit Card selected=======+");
+        System.out.println("... Payment is being processed");
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            System.out.println(e);
+        }
+        cart.pay(new CreditCardStrategy("pedro palma", "111-111-111", LocalDate.of(2023, 12, 12)));
+    }
 
+    /**
+     * Method to handle Paypal payment strategy
+     */
+    private void paypalStrategy(ShoppingCart cart) {
+        // pause for 3 seconds to emulate payment being processed
+        System.out.println("+=======Payment by Paypal selected=======+");
+        System.out.println("... Payment is being processed");
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            System.out.println(e);
+        }
+        cart.pay(new PaypalStrategy("pedro.palma@gmail.com", "pmcpalma"));
     }
 
     /**
@@ -320,7 +336,15 @@ public class EcommerceController {
      */
 
     private void mobilePayStrategy (ShoppingCart cart) {
-
+        // pause for 3 seconds to emulate payment being processed
+        System.out.println("+=======Payment by MobilePay selected=======+");
+        System.out.println("... Payment is being processed");
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            System.out.println(e);
+        }
+        cart.pay(new MobilePayStrategy("555-555-555"));
     }
 
     /**
@@ -360,7 +384,6 @@ public class EcommerceController {
                         if (choice.equals("y")) {
                             System.out.println("Return successful,Your replaced item is" + itemToReplace.toString());
                             System.out.println("Press Enter to continue");
-                            //System.in.read();
                         } else if (choice.equals("n")) {
                             System.out.println("Returning back to customer menu");
                             displayCustMenu();
