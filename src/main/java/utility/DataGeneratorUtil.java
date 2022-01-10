@@ -75,7 +75,7 @@ public class DataGeneratorUtil {
                 .withItemCode(pTestCode)
                 .withBasePrice(pTestPrice)
                 .withQuantity(quantityTest)
-                .withBasePrice(pPrice)
+                .withBasePrice(pTestPrice)
                 .build();
 
         items.put(pTwoId, p2);

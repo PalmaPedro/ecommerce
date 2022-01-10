@@ -9,6 +9,10 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 public class EcommerceController {
+    //ItemController itemController = new ItemController();
+    //CustomerController customerController = new CustomerController();
+    //InvoiceController invoiceController = new InvoiceController();
+
     DataGeneratorUtil dataGeneratorUtil = new DataGeneratorUtil();
     Map<String, Customer> customers;
     Map<Long, Item> items;
@@ -120,7 +124,6 @@ public class EcommerceController {
     }
 
     // Methods
-
      private void login() {
          Customer customer;
          String cEmail;
@@ -273,34 +276,9 @@ public class EcommerceController {
         try {
             if (items.containsKey(selected)) {
                 item = items.get(selected);
-                long min = 1L;
-                long max = 100L;
-                long invoiceNo = min + (long) (Math.random() * (max - min));
 
-                BaseInvoice invoice = new Invoice.InvoiceBuilder()
-                        .withInvoiceNo(invoiceNo)
-                        .belongsTo(c)
-                        .forItem(item)
-                        .hasTotal(item.getItemTotal())
-                        .build();
+                generateInvoice(item, c);
 
-                invoices.put(invoiceNo, invoice);
-                itemCodes.put(item.getItemCode(), item);
-
-                // Add color, header and footer to invoice
-                InvoiceDecorator colorDecorator = new ColorDecorator();
-                InvoiceDecorator headerDecorator = new HeaderDecorator();
-                InvoiceDecorator footerDecorator = new FooterDecorator();
-
-                colorDecorator.attachTo(invoice);
-                footerDecorator.attachTo(colorDecorator);
-                headerDecorator.attachTo(footerDecorator);
-                headerDecorator.createInvoice();
-
-                invoice.printInvoice();
-
-                // reset color
-                System.out.println(ColorEnum.RESET);
                 System.out.println("\nPress Enter to continue");
 
             }
@@ -339,6 +317,41 @@ public class EcommerceController {
      * Method for unsubscribe a customer
      */
     private void unsubscribe(Customer customer) {
+
+    }
+
+    /**
+     * Method to generate invoice
+     */
+    private void generateInvoice(Item item, Customer c) {
+        long min = 1L;
+        long max = 100L;
+        long invoiceNo = min + (long) (Math.random() * (max - min));
+
+        BaseInvoice invoice = new Invoice.InvoiceBuilder()
+                .withInvoiceNo(invoiceNo)
+                .belongsTo(c)
+                .forItem(item)
+                .hasTotal(item.getItemTotal())
+                .build();
+
+        invoices.put(invoiceNo, invoice);
+        itemCodes.put(item.getItemCode(), item);
+
+        // Add color, header and footer to invoice
+        InvoiceDecorator colorDecorator = new ColorDecorator();
+        InvoiceDecorator headerDecorator = new HeaderDecorator();
+        InvoiceDecorator footerDecorator = new FooterDecorator();
+
+        colorDecorator.attachTo(invoice);
+        footerDecorator.attachTo(colorDecorator);
+        headerDecorator.attachTo(footerDecorator);
+        headerDecorator.createInvoice();
+
+        invoice.printInvoice();
+
+        // reset color
+        System.out.println(ColorEnum.RESET);
 
     }
 
