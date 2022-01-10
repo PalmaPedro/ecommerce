@@ -50,7 +50,7 @@ public class DataGeneratorUtil {
         long pId = 1;
         String pName = "Centurion Ultimate";
         String pCode = "CENT01";
-        double pPrice = 5.999;
+        double pPrice = 4.999;
         int quantity = 1;
 
         Item p = new Item.ItemBuilder()

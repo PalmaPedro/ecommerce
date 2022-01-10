@@ -5,13 +5,9 @@ import utility.ColorEnum;
 import utility.DataGeneratorUtil;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 public class EcommerceController {
-    //ItemController itemController = new ItemController();
-    //CustomerController customerController = new CustomerController();
-    //InvoiceController invoiceController = new InvoiceController();
 
     DataGeneratorUtil dataGeneratorUtil = new DataGeneratorUtil();
     Map<String, Customer> customers;
@@ -100,7 +96,7 @@ public class EcommerceController {
      * @return selected - User menu prompt selection of type int. returns a choice
      *          or exception if invalid input
      */
-    private int displayPaymentOptMenu() {
+    int displayPaymentOptMenu() {
         String inputToParse;
         int selected;
 
@@ -210,11 +206,90 @@ public class EcommerceController {
         }
     }
 
+    private void showInvoices() {
+        Set<Map.Entry<Long, BaseInvoice>> set = invoices.entrySet();
+        Iterator<Map.Entry<Long, BaseInvoice>> iterator = set.iterator();
+        System.out.println("\n+================================+");
+        while (iterator.hasNext()) {
+            Map.Entry<Long, BaseInvoice> mentry = iterator.next();
+            System.out.println("|" + mentry.getValue() + "|");
+        }
+        System.out.println("+================================+");
+    }
+
+    /**
+     * Method for subscribing a customer to a "price drop" alert
+     */
+    private void subscribe(Customer customer) {
+        // Show list of items
+        String choice;
+        long selected;
+
+        showItems();
+        // select an item to subscribe and search for it by its key in the hashmap
+        System.out.println("Enter the product Id of the item you want to subscribe");
+        // choice
+        choice = consoleScan.nextLine();
+        selected = Long.parseLong(choice);
+
+        if (items.containsKey(selected)) {
+            // attach or subscribe customer
+            items.get(selected).subscribe(customer);
+
+            // show that customer will be notified if price is lower than basePrice
+            // this is temporary. add an option to input price change and fetch subscribed customers list to notify all
+            items.get(selected).price(1.999);
+        }
+
+    }
+
+    /**
+     * Method for unsubscribe a customer
+     */
+    private void unsubscribe(Customer customer) {
+
+    }
+
+    /**
+     * Method to generate invoice
+     */
+    void generateInvoice(Item item, Customer c) {
+        long min = 1L;
+        long max = 100L;
+        long invoiceNo = min + (long) (Math.random() * (max - min));
+
+        BaseInvoice invoice = new Invoice.InvoiceBuilder()
+                .withInvoiceNo(invoiceNo)
+                .belongsTo(c)
+                .forItem(item)
+                .hasTotal(item.getItemTotal())
+                .build();
+
+        invoices.put(invoiceNo, invoice);
+        itemCodes.put(item.getItemCode(), item);
+
+        // Add color, header and footer to invoice
+        InvoiceDecorator colorDecorator = new ColorDecorator();
+        InvoiceDecorator headerDecorator = new HeaderDecorator();
+        InvoiceDecorator footerDecorator = new FooterDecorator();
+
+        colorDecorator.attachTo(invoice);
+        footerDecorator.attachTo(colorDecorator);
+        headerDecorator.attachTo(footerDecorator);
+        headerDecorator.createInvoice();
+
+        invoice.printInvoice();
+
+        // reset color
+        System.out.println(ColorEnum.RESET);
+
+    }
+
     /**
      * Method to display all items for sale from datasource or test data
      *
      */
-    private void showItems() {
+    void showItems() {
         Set<Map.Entry<Long, Item>> set = items.entrySet();
         Iterator<Map.Entry<Long, Item>> iterator = set.iterator();
         System.out.println("\n+=============Items in Stock===================+");
@@ -229,22 +304,11 @@ public class EcommerceController {
         System.out.println("+=================================================+");
     }
 
-    private void showInvoices() {
-        Set<Map.Entry<Long, BaseInvoice>> set = invoices.entrySet();
-        Iterator<Map.Entry<Long, BaseInvoice>> iterator = set.iterator();
-        System.out.println("\n+================================+");
-        while (iterator.hasNext()) {
-            Map.Entry<Long, BaseInvoice> mentry = iterator.next();
-            System.out.println("|" + mentry.getValue() + "|");
-        }
-        System.out.println("+================================+");
-    }
-
     /**
      * Method for choosing an item to buy by its key and making it into an invoice
      * by looking for its key value in hashmap.
      */
-    private void buyItem(Customer c) {
+    void buyItem(Customer c) {
         // Show list of items
         String choice;
         Long selected;
@@ -287,78 +351,11 @@ public class EcommerceController {
         }
     }
 
-    /**
-     * Method for subscribing a customer to a "price drop" alert
-     */
-    private void subscribe(Customer customer) {
-        // Show list of items
-        String choice;
-        long selected;
-
-        showItems();
-        // select an item to subscribe and search for it by its key in the hashmap
-        System.out.println("Enter the product Id of the item you want to subscribe");
-        // choice
-        choice = consoleScan.nextLine();
-        selected = Long.parseLong(choice);
-
-        if (items.containsKey(selected)) {
-            // attach or subscriber customer
-            items.get(selected).subscribe(customer);
-
-            // show that customer will be notified if price is lower than basePrice
-            // this is temporary. add an option to input price change and fetch subscribed customers list to notify all
-            items.get(selected).price(5.999);
-        }
-
-    }
-
-    /**
-     * Method for unsubscribe a customer
-     */
-    private void unsubscribe(Customer customer) {
-
-    }
-
-    /**
-     * Method to generate invoice
-     */
-    private void generateInvoice(Item item, Customer c) {
-        long min = 1L;
-        long max = 100L;
-        long invoiceNo = min + (long) (Math.random() * (max - min));
-
-        BaseInvoice invoice = new Invoice.InvoiceBuilder()
-                .withInvoiceNo(invoiceNo)
-                .belongsTo(c)
-                .forItem(item)
-                .hasTotal(item.getItemTotal())
-                .build();
-
-        invoices.put(invoiceNo, invoice);
-        itemCodes.put(item.getItemCode(), item);
-
-        // Add color, header and footer to invoice
-        InvoiceDecorator colorDecorator = new ColorDecorator();
-        InvoiceDecorator headerDecorator = new HeaderDecorator();
-        InvoiceDecorator footerDecorator = new FooterDecorator();
-
-        colorDecorator.attachTo(invoice);
-        footerDecorator.attachTo(colorDecorator);
-        headerDecorator.attachTo(footerDecorator);
-        headerDecorator.createInvoice();
-
-        invoice.printInvoice();
-
-        // reset color
-        System.out.println(ColorEnum.RESET);
-
-    }
 
     /**
      * Method to handle payment for an item
      */
-    private void pay(int option, ShoppingCart cart) {
+    void pay(int option, ShoppingCart cart) {
         switch (option) {
             case 1 -> creditCardStrategy(cart);
             case 2 -> paypalStrategy(cart);
@@ -411,67 +408,6 @@ public class EcommerceController {
         }
         cart.pay(new MobilePayStrategy("555-555-555"));
     }
-
-    /**
-     * Method for checking a purchase by invoice and purchase date and returning an
-     * item within a 15 day return policy
-     */
-    /*
-    private void ReplaceItem(Customer c) {
-        String input;
-        String choice;
-        Item itemToReplace;
-        Long invoiceNo;
-        BaseInvoice enteredInvoice;
-        System.out.println("Welcome " + c.getEmail() + "!! Your invoice details are:");
-        showInvoices();
-
-        try {
-            System.out.println("Enter the invoice number.");
-            input = consoleScan.nextLine();
-            invoiceNo = Long.parseLong(input);
-
-            if (invoices.containsKey(invoiceNo)) {
-                System.out.println("Invoice found");
-                enteredInvoice = invoices.get(invoiceNo);
-
-                System.out.println("Enter the itemcode of the item to replace.");
-                input = consoleScan.nextLine();
-
-                if (itemCodes.containsKey(input)) {
-
-                    itemToReplace = itemCodes.get(input);
-                    long validDate = ChronoUnit.DAYS.between(enteredInvoice.getPurchaseDate(), LocalDate.now());
-
-                    if (validDate >= -15) {
-                        System.out.println(
-                                "Yes, you can return your purchase. Would you like to proceed (enter y for yes or n for no.)");
-                        choice = consoleScan.nextLine();
-                        if (choice.equals("y")) {
-                            System.out.println("Return successful,Your replaced item is" + itemToReplace.toString());
-                            System.out.println("Press Enter to continue");
-                        } else if (choice.equals("n")) {
-                            System.out.println("Returning back to customer menu");
-                            displayCustMenu();
-                        } else {
-                            System.out.println("Not valid input");
-                        }
-                    } else {
-                        System.out.println(
-                                "Your purchase is past the 15 day period. You are not able to return or replace your item(s)");
-                        System.out.println("Press Enter to continue");
-                        //System.in.read();
-                    }
-
-                } else {
-                    System.out.println("You dont have this item in your invoice");
-                }
-            }
-        } catch (Exception e) {
-            System.out.println("Not a valid choice");
-
-        }
-    }*/
 
     /**
      * Method for starting up ecommerce menu for Customer registration Customer

@@ -31,7 +31,7 @@ public class Item implements IItem{
 
     public void setCurrentPrice(double currentPrice) { this.currentPrice = currentPrice; }
 
-    public double getDiscount () { return (getBasePrice() - getCurrentPrice()) * 100 / getBasePrice(); }
+    public double getDiscount () { return Math.round((getBasePrice() - getCurrentPrice()) * 100 / getBasePrice()); }
 
     public void price(double value) {
         setCurrentPrice(value);
